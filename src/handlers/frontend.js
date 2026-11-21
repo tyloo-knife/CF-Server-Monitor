@@ -432,7 +432,6 @@ function buildHtmlResponse(html, settings, request, env = {}, previewThemeUrl = 
   const headers = new Headers({
     'Content-Type': 'text/html;charset=UTF-8',
     'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'DENY',
     'Content-Security-Policy': rendered.csp
   });
 
