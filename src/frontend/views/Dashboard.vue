@@ -387,6 +387,7 @@ import { normalizeTimestamp as normalizeMetricTimestamp } from '../utils/time.js
 import { normalizeDashboardView, normalizeDisplayMode, resolveDisplayMode } from '../utils/displayMode.js'
 import { getPlaybackElapsedMs, resolvePlaybackCursor } from '../utils/playback.js'
 import { getMikusAssetUrl, isMikusThemeEnabled, normalizeThemeOptions, setMikusThemeClass } from '../utils/themeOptions.js'
+import { staggerMountElements } from '../composables/useAppleMotion'
 import {
   CURRENCY_SYMBOLS,
   DEFAULT_EXCHANGE_RATES,
@@ -1088,6 +1089,7 @@ let liveSockets = []
 let liveConnectionClosedByUser = false
 let themeObserver = null
 let timeUpdateInterval = null
+let hasPlayedMountStagger = false
 
 const stopLiveSockets = () => {
   if (liveSockets.length === 0) return
@@ -1244,12 +1246,12 @@ let markersLayer, geoJsonLayer, currentMapDataStr = ""
 const getThemeColors = () => {
   const isLight = document.body.classList.contains('light')
   return {
-    bgPrimary: isLight ? '#0a0e14' : '#0a0e14',
-    bgSecondary: isLight ? '#e8e8e0' : '#12171f',
-    borderColor: isLight ? '#1e2a3a' : '#1e2a3a',
-    accentGreen: isLight ? '#00d4aa' : '#00d4aa',
-    colorBlack: isLight ? '#000' : '#000',
-    colorWhite: isLight ? '#fff' : '#fff'
+    bgPrimary: isLight ? '#f6f4f0' : '#141312',
+    bgSecondary: isLight ? '#edeae3' : '#242220',
+    borderColor: isLight ? '#d4d0c7' : '#3a3835',
+    accentGreen: isLight ? '#c86b46' : '#e8936f',
+    colorBlack: isLight ? '#ffffff' : '#1a1918',
+    colorWhite: isLight ? '#1d1c1a' : '#e8e6e1'
   }
 }
 
@@ -1292,7 +1294,7 @@ const drawMarkers = () => {
     if (regionCoords[upperCode]) {
       const icon = window.L.divIcon({
         className: 'custom-map-marker',
-        html: `<div style="background:${colors.accentGreen}; color:${colors.colorBlack}; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; border:2px solid ${colors.bgPrimary}; box-shadow:0 0 10px ${colors.accentGreen}80; font-family:JetBrains Mono,monospace;">${count}</div>`,
+        html: `<div style="background:${colors.accentGreen}; color:${colors.colorBlack}; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; border:2px solid ${colors.bgPrimary}; box-shadow:0 2px 8px rgba(0,0,0,0.35); font-family:JetBrains Mono,monospace;">${count}</div>`,
         iconSize: [22,22]
       })
       window.L.marker(regionCoords[upperCode], {icon: icon}).addTo(markersLayer)
@@ -1327,6 +1329,14 @@ onMounted(async () => {
   }
   await refreshData()
   await nextTick()
+  if (!hasPlayedMountStagger) {
+    hasPlayedMountStagger = true
+    staggerMountElements(
+      document.querySelector('.container'),
+      '.nav-area, .global-stats, .view-panel.active .group-header, .view-panel.active .server-card, .view-panel.active .table-container',
+      12
+    )
+  }
   scheduleFilterMeasurement()
   if (window.ResizeObserver && filterWrap.value) {
     filterResizeObserver = new ResizeObserver(scheduleFilterMeasurement)

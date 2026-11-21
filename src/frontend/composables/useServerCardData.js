@@ -295,7 +295,7 @@ export function useServerCardData(props) {
 
   const getLossColor = (loss) => {
     const value = normalizeProbeMetricValue(loss)
-    if (value === null || value === false) return 'rgba(255, 255, 255, 0.08)'
+    if (value === null || value === false) return 'var(--border-color)'
     if (value <= 0) return 'var(--accent-green)'
     if (value < 5) return 'var(--accent-blue)'
     if (value < 20) return 'var(--accent-yellow)'

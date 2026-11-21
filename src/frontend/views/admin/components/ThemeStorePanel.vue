@@ -763,7 +763,7 @@ const getSafeExternalUrl = (value) => {
 }
 
 const handleCoverError = (e) => {
-  e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 225"><rect fill="%231a1a2e" width="400" height="225"/><text fill="%23666" font-family="monospace" font-size="16" x="200" y="112" text-anchor="middle">No Preview</text></svg>'
+  e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 225"><rect fill="%23141312" width="400" height="225"/><text fill="%2385817a" font-family="monospace" font-size="16" x="200" y="112" text-anchor="middle">No Preview</text></svg>'
 }
 
 watch(
@@ -888,18 +888,20 @@ watch(
   flex-direction: column;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--radius-control, 12px);
   overflow: hidden;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color var(--duration-hover, 150ms) var(--ease-hover, ease), background-color var(--duration-hover, 150ms) var(--ease-hover, ease);
 }
 
-.theme-card:hover {
-  border-color: var(--accent-green);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+@media (hover: hover) and (pointer: fine) {
+  .theme-card:hover {
+    border-color: var(--hairline-strong, var(--accent-copper, #e8936f));
+    background: var(--bg-hover);
+  }
 }
 
 .theme-card.active {
-  border-color: var(--accent-green);
+  border-color: var(--accent-copper, var(--accent-cyan));
 }
 
 .theme-space {
@@ -910,7 +912,7 @@ watch(
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  background: var(--bg-secondary, #1a1a2e);
+  background: var(--bg-secondary, #141312);
 }
 
 .theme-cover-wrap-mikus {
@@ -1012,9 +1014,9 @@ watch(
   min-width: 0;
   font-size: 11px;
   padding: 4px 8px;
-  background: var(--bg-secondary, #1a1a2e);
+  background: var(--bg-secondary, #141312);
   border: 1px solid var(--border-color);
-  border-radius: 3px;
+  border-radius: 8px;
   color: var(--text-primary);
   font-family: var(--terminal-font);
   cursor: pointer;
@@ -1022,7 +1024,7 @@ watch(
 
 .version-select:focus {
   outline: none;
-  border-color: var(--accent-green);
+  border-color: var(--accent-copper, var(--accent-cyan));
 }
 
 .version-load-btn {
@@ -1033,7 +1035,7 @@ watch(
   margin-bottom: 10px;
   padding: 6px 8px;
   background: var(--bg-hover, rgba(255,255,255,0.03));
-  border-radius: 3px;
+  border-radius: 6px;
 }
 
 .version-date {
@@ -1047,8 +1049,8 @@ watch(
 }
 
 .changelog-label {
-  color: var(--accent-green);
-  font-weight: 500;
+  color: var(--accent-copper, var(--accent-green));
+  font-weight: 600;
   margin-bottom: 2px;
 }
 

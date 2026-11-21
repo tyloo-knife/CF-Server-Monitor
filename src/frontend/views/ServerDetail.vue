@@ -414,6 +414,7 @@ import useTheme from '../composables/useTheme'
 import { isDisabledProbeMetric } from '../utils/server.js'
 import { resolvePlaybackCursor } from '../utils/playback.js'
 import { applyMikusThemeOptions } from '../utils/themeOptions.js'
+import { staggerMountElements } from '../composables/useAppleMotion'
 
 const route = useRoute()
 const router = useRouter()
@@ -910,12 +911,12 @@ const syncChartLabels = (chart) => {
 
 const ds = (label, color, opts = {}) => ({
   label, data: [], borderColor: color,
-  backgroundColor: opts.fill ? hexToRgba(color, 0.05) : 'transparent',
-  fill: !!opts.fill, tension: opts.tension ?? 0.4, borderWidth: 1.5,
+  backgroundColor: opts.fill ? hexToRgba(color, 0.12) : 'transparent',
+  fill: !!opts.fill, tension: opts.tension ?? 0.4, borderWidth: 2,
   pointRadius: 0, hoverRadius: 5, spanGaps: false, ...opts
 })
 
-const GPU_COLORS = ['#ff7b72', '#79c0ff', '#d2a8ff', '#7ee787', '#ffa657', '#ff7b72', '#56d4dd', '#e3b341']
+const GPU_COLORS = ['#e8936f', '#5ac8fa', '#30d158', '#ff9f0a', '#bf5af2', '#ff453a', '#64d2ff', '#ffd60a']
 
 const GPU_DETAIL_CHART_KEYS = ['gpu', 'gpuMem', 'gpuClock', 'gpuPower']
 
@@ -934,23 +935,23 @@ const gpuFieldAccessor = (gpuId, chartKey) => (d) => {
 }
 
 const CHART_DEFS = [
-  { key: 'cpu', ref: () => cpuChartRef.value, datasets: [ds('CPU', '#00d4aa', { fill: true })], unit: '%' },
+  { key: 'cpu', ref: () => cpuChartRef.value, datasets: [ds('CPU', '#e8936f', { fill: true })], unit: '%' },
   { key: 'gpu', ref: () => gpuChartRef.value, datasets: [], unit: '%', legend: true },
   { key: 'gpuMem', ref: () => gpuMemChartRef.value, datasets: [], legend: true, tickFormat: (v) => formatBytes(v * 1024 * 1024) },
   { key: 'gpuClock', ref: () => gpuClockChartRef.value, datasets: [], unit: ' MHz', legend: true },
   { key: 'gpuPower', ref: () => gpuPowerChartRef.value, datasets: [], unit: ' W', legend: true },
-  { key: 'ram', ref: () => ramChartRef.value, datasets: [ds('Memory', '#b392f0', { fill: true }), ds('Swap', '#ffb870', { fill: true })], unit: '%', legend: true },
-  { key: 'disk', ref: () => diskChartRef.value, datasets: [ds('Disk', '#39d2c0', { fill: true })], unit: '%' },
+  { key: 'ram', ref: () => ramChartRef.value, datasets: [ds('Memory', '#e8936f', { fill: true }), ds('Swap', '#5ac8fa', { fill: true })], unit: '%', legend: true },
+  { key: 'disk', ref: () => diskChartRef.value, datasets: [ds('Disk', '#30d158', { fill: true })], unit: '%' },
   {
     key: 'diskIo',
     ref: () => diskIoChartRef.value,
     datasets: [
-      ds('Read', '#00d4aa', { fill: true, yAxisID: 'y', formatValue: (v) => formatBytes(v) + '/s' }),
-      ds('Write', '#ffb870', { fill: true, yAxisID: 'y', formatValue: (v) => formatBytes(v) + '/s' }),
-      ds('Read IOPS', '#4da6ff', { yAxisID: 'y1', borderDash: [5, 4], formatValue: (v) => `${formatDiskIoNumber(v)} ops/s` }),
-      ds('Write IOPS', '#b392f0', { yAxisID: 'y1', borderDash: [5, 4], formatValue: (v) => `${formatDiskIoNumber(v)} ops/s` }),
-      ds('await', '#f778ba', { yAxisID: 'y1', borderDash: [2, 4], formatValue: (v) => `${formatDiskIoNumber(v)} ms` }),
-      ds('util', '#ff7b72', { yAxisID: 'y1', borderDash: [8, 4], formatValue: (v) => `${formatDiskIoNumber(v)}%` })
+      ds('Read', '#30d158', { fill: true, yAxisID: 'y', formatValue: (v) => formatBytes(v) + '/s' }),
+      ds('Write', '#ff9f0a', { fill: true, yAxisID: 'y', formatValue: (v) => formatBytes(v) + '/s' }),
+      ds('Read IOPS', '#5ac8fa', { yAxisID: 'y1', borderDash: [5, 4], formatValue: (v) => `${formatDiskIoNumber(v)} ops/s` }),
+      ds('Write IOPS', '#bf5af2', { yAxisID: 'y1', borderDash: [5, 4], formatValue: (v) => `${formatDiskIoNumber(v)} ops/s` }),
+      ds('await', '#e8936f', { yAxisID: 'y1', borderDash: [2, 4], formatValue: (v) => `${formatDiskIoNumber(v)} ms` }),
+      ds('util', '#ff453a', { yAxisID: 'y1', borderDash: [8, 4], formatValue: (v) => `${formatDiskIoNumber(v)}%` })
     ],
     legend: true,
     tickFormat: (v) => formatBytes(v),
@@ -968,12 +969,12 @@ const CHART_DEFS = [
       }
     })
   },
-  { key: 'proc', ref: () => procChartRef.value, datasets: [ds('Processes', '#f778ba', { fill: true })] },
-  { key: 'net', ref: () => netChartRef.value, datasets: [ds('Download', '#00d4aa', { fill: true }), ds('Upload', '#4da6ff', { fill: true })], legend: true, formatValue: (v) => formatBytes(v) + '/s', tickFormat: (v) => formatBytes(v) },
-  { key: 'conn', ref: () => connChartRef.value, datasets: [ds('TCP', '#b392f0'), ds('UDP', '#f778ba')], legend: true },
-  { key: 'ping', ref: () => pingChartRef.value, datasets: ['ct', 'cu', 'cm', 'bd', 'node_1', 'node_2', 'node_3', 'node_4'].map((key, i) => ds(pingLabel(key), ['#00d4aa', '#ffb870', '#4da6ff', '#b392f0', '#ff7b72', '#79c0ff', '#7ee787', '#ffa657'][i], { tension: 0.3 })), unit: ' ms', legend: true },
-  { key: 'loss', ref: () => lossChartRef.value, datasets: ['ct', 'cu', 'cm', 'bd', 'node_1', 'node_2', 'node_3', 'node_4'].map((key, i) => ds(pingLabel(key), ['#00d4aa', '#ffb870', '#4da6ff', '#b392f0', '#ff7b72', '#79c0ff', '#7ee787', '#ffa657'][i], { tension: 0.3 })), unit: '%', legend: true },
-  { key: 'load', ref: () => loadChartRef.value, datasets: [ds(trans.value.load1m || '1 Min', '#00d4aa', { tension: 0.3 }), ds(trans.value.load5m || '5 Min', '#ffb870', { tension: 0.3 }), ds(trans.value.load15m || '15 Min', '#4da6ff', { tension: 0.3 })], legend: true }
+  { key: 'proc', ref: () => procChartRef.value, datasets: [ds('Processes', '#e8936f', { fill: true })] },
+  { key: 'net', ref: () => netChartRef.value, datasets: [ds('Download', '#5ac8fa', { fill: true }), ds('Upload', '#30d158', { fill: true })], legend: true, formatValue: (v) => formatBytes(v) + '/s', tickFormat: (v) => formatBytes(v) },
+  { key: 'conn', ref: () => connChartRef.value, datasets: [ds('TCP', '#e8936f'), ds('UDP', '#5ac8fa')], legend: true },
+  { key: 'ping', ref: () => pingChartRef.value, datasets: ['ct', 'cu', 'cm', 'bd', 'node_1', 'node_2', 'node_3', 'node_4'].map((key, i) => ds(pingLabel(key), ['#e8936f', '#5ac8fa', '#30d158', '#ff9f0a', '#bf5af2', '#ff453a', '#64d2ff', '#ffd60a'][i], { tension: 0.3 })), unit: ' ms', legend: true },
+  { key: 'loss', ref: () => lossChartRef.value, datasets: ['ct', 'cu', 'cm', 'bd', 'node_1', 'node_2', 'node_3', 'node_4'].map((key, i) => ds(pingLabel(key), ['#e8936f', '#5ac8fa', '#30d158', '#ff9f0a', '#bf5af2', '#ff453a', '#64d2ff', '#ffd60a'][i], { tension: 0.3 })), unit: '%', legend: true },
+  { key: 'load', ref: () => loadChartRef.value, datasets: [ds(trans.value.load1m || '1 Min', '#e8936f', { tension: 0.3 }), ds(trans.value.load5m || '5 Min', '#ff9f0a', { tension: 0.3 }), ds(trans.value.load15m || '15 Min', '#5ac8fa', { tension: 0.3 })], legend: true }
 ]
 
 const syncProbeChartVisibility = () => {
@@ -1023,7 +1024,7 @@ const rebuildGpuChartDatasets = () => {
       return dataset
     })
     if (newDatasets.length === 0) {
-      newDatasets.push(ds('GPU', '#ff7b72', { fill: true }))
+      newDatasets.push(ds('GPU', '#e8936f', { fill: true }))
     }
     chart.data.datasets = newDatasets
     chart.update('none')
@@ -1039,12 +1040,12 @@ const getCssVar = (name, fallback) => {
 const isLightBodyTheme = () => typeof document !== 'undefined' && document.body.classList.contains('light')
 
 const getChartThemeColors = () => ({
-  axis: getCssVar('--text-muted', isLightBodyTheme() ? 'rgba(10, 14, 20, 0.8)' : 'rgba(211, 218, 227, 0.8)'),
-  grid: getCssVar('--border-color', 'rgba(30, 42, 58, 0.5)'),
-  tooltipBg: getCssVar('--bg-primary', 'rgba(10, 14, 20, 0.95)'),
-  tooltipTitle: getCssVar('--accent-green', '#00d4aa'),
-  tooltipBody: getCssVar('--text-primary', '#d3dae3'),
-  tooltipBorder: getCssVar('--border-color', '#1e2a3a')
+  axis: getCssVar('--text-muted', isLightBodyTheme() ? '#625e57' : '#85817a'),
+  grid: getCssVar('--border-color', isLightBodyTheme() ? 'rgba(29, 28, 26, 0.10)' : 'rgba(232, 230, 225, 0.08)'),
+  tooltipBg: getCssVar('--input-bg', isLightBodyTheme() ? '#ffffff' : '#141312'),
+  tooltipTitle: getCssVar('--accent-copper', '#e8936f'),
+  tooltipBody: getCssVar('--text-primary', isLightBodyTheme() ? '#1d1c1a' : '#e8e6e1'),
+  tooltipBorder: getCssVar('--border-active', '#3a3835')
 })
 
 const initCharts = () => {
@@ -1052,7 +1053,7 @@ const initCharts = () => {
 
   const chartTheme = getChartThemeColors()
 
-  Chart.defaults.font.family = "'JetBrains Mono', 'Courier New', monospace"
+  Chart.defaults.font.family = "'JetBrains Mono', ui-monospace, monospace"
   Chart.defaults.font.size = 10
   Chart.defaults.color = chartTheme.axis
   Chart.defaults.plugins.tooltip.backgroundColor = chartTheme.tooltipBg
@@ -1063,7 +1064,7 @@ const initCharts = () => {
   Chart.defaults.plugins.tooltip.titleFont = { size: 12, weight: 'bold', family: "'JetBrains Mono', monospace" }
   Chart.defaults.plugins.tooltip.bodyFont = { size: 11, family: "'JetBrains Mono', monospace" }
   Chart.defaults.plugins.tooltip.padding = 12
-  Chart.defaults.plugins.tooltip.cornerRadius = 2
+  Chart.defaults.plugins.tooltip.cornerRadius = 10
 
   const createChartOptions = (unit = '', showLegend = false, formatCallback = null, tickFormat = null, extraScales = null) => {
     const resolvedExtraScales = typeof extraScales === 'function'
@@ -1164,8 +1165,8 @@ const initCharts = () => {
         ...resolvedExtraScales
       },
       elements: {
-        point: { radius: 0, hoverRadius: 5, hitRadius: 10, borderWidth: 0, hoverBorderWidth: 2, hoverBorderColor: '#fff' },
-        line: { tension: 0.4, borderWidth: 1.5, fill: false, spanGaps: false }
+        point: { radius: 0, hoverRadius: 5, hitRadius: 10, borderWidth: 0, hoverBorderWidth: 2, hoverBorderColor: '#e8e6e1' },
+        line: { tension: 0.4, borderWidth: 2, fill: false, spanGaps: false }
       }
     }
   }
@@ -1895,12 +1896,23 @@ const loadThemeOptionsFromConfig = async () => {
   }
 }
 
+let hasPlayedDetailStagger = false
+
 const init = async () => {
   const [initialData] = await Promise.all([
     fetchCurrentStatus(),
     loadThemeOptionsFromConfig()
   ])
   await initChartsOnMount()
+  await nextTick()
+  if (!hasPlayedDetailStagger) {
+    hasPlayedDetailStagger = true
+    staggerMountElements(
+      document.querySelector('.container'),
+      '.nav-bar, .host-card, .chart-card',
+      10
+    )
+  }
 
   await loadAllHistory(currentHours.value)
   replayLatestReportUpdates(initialData)

@@ -12,7 +12,7 @@
         </span>
         <span class="server-name">{{ server.name }}</span>
       </div>
-      <span class="status-label" :style="{ color: statusColor, borderColor: statusColor }">{{ statusText }}</span>
+      <span class="status-label" :class="isOnline ? 'is-online' : 'is-offline'">{{ statusText }}</span>
     </div>
     <div class="server-meta">
       <div class="card-meta">
@@ -70,7 +70,7 @@
           </template>
           <template v-else>
             <div class="stat-bar-container">
-              <div class="stat-bar-fill" style="background-image: linear-gradient(to right, #00d4aa, #4da6ff, #ffb870, #f85149);"></div>
+              <div class="stat-bar-fill" style="background-image: linear-gradient(to right, #30d158, #5ac8fa, #e8936f, #ff9f0a);"></div>
             </div>
             <span class="stat-value" style="font-size: 2em;line-height: 0;">∞</span>
           </template>
@@ -140,7 +140,7 @@ const props = defineProps({
 const {
   trans,
   regionCode,
-  statusColor,
+  isOnline,
   statusText,
   cpuPercent,
   ramPercent,

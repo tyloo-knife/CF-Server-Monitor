@@ -1,45 +1,65 @@
 /* =============================================
-   Light Theme (浅色终端)
+   Light Theme (Warm Stone Light + Terracotta)
 ============================================= */
 
-/* CSS Variables - 核心变量重定义 */
 body.light {
-  --bg-primary: #f5f5f0;
-  --bg-secondary: rgba(232, 232, 224, 0.6);
-  --bg-card: rgba(250, 250, 245, 0.6);
-  --bg-hover: rgba(240, 240, 232, 0.6);
-  --bg-card-solid: #fafaf5;
-  --bg-hover-solid: #f0f0e8;
-  --border-color: #d4d4c8;
-  --border-active: #b8b8a8;
-  --text-primary: #2c2c2c;
-  --text-secondary: #5c5c5c;
-  --text-muted: rgba(10, 14, 20, 0.8);
-  --accent-green: #1a7f5a;
-  --accent-blue: #2563eb;
-  --accent-purple: #7c3aed;
-  --accent-pink: #db2777;
-  --accent-yellow: #d97706;
-  --accent-red: #dc2626;
-  --accent-cyan: #0d9488;
+  color-scheme: light;
+
+  --stone: #f6f4f0;
+  --stone-deep: #edeae3;
+  --stone-raised: #ffffff;
+  --stone-hover: #f0ede6;
+  --ink: #ffffff;
+  --paper: #1d1c1a;
+  --ash: #625e57;
+  --mist: #847f77;
+  --hairline: rgba(29, 28, 26, 0.12);
+  --hairline-strong: rgba(29, 28, 26, 0.24);
+
+  --copper: #c86b46;
+  --copper-hover: #b55b38;
+  --copper-press: #9f4d2e;
+  --accent-soft: rgba(200, 107, 70, 0.14);
+
+  --moss: #248a3d;
+  --moss-ink: #176b2c;
+  --clay: #c97a00;
+  --rose: #d70015;
+  --apple-cyan: #0071e3;
+  --apple-indigo: #8944ab;
+  --apple-pink: #d30f45;
+
+  --bar: rgba(255, 255, 255, 0.86);
+  --sheet: rgba(255, 255, 255, 0.94);
+
+  --bg-primary: var(--stone);
+  --bg-secondary: var(--stone-raised);
+  --bg-card: var(--stone-raised);
+  --bg-hover: var(--stone-hover);
+  --bg-card-solid: var(--stone-raised);
+  --bg-hover-solid: var(--stone-hover);
+  --border-color: var(--hairline);
+  --border-active: var(--hairline-strong);
+  --text-primary: var(--paper);
+  --text-secondary: var(--ash);
+  --text-muted: var(--mist);
+
+  --accent-copper: var(--copper);
+  --accent-green: var(--moss);
+  --accent-blue: var(--apple-cyan);
+  --accent-purple: var(--apple-indigo);
+  --accent-pink: var(--apple-pink);
+  --accent-yellow: var(--clay);
+  --accent-red: var(--rose);
+  --accent-cyan: var(--copper);
+
   --input-bg: #ffffff;
-  --input-border: #d4d4c8;
-  --color-inherit: #fff;
-  --color-active: #000;
+  --input-border: rgba(29, 28, 26, 0.16);
+  --color-inherit: var(--ink);
+  --color-active: var(--paper);
 }
 
-/* Scanline Effect - 浅色主题使用更淡的扫描线 */
-body.light::before {
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.015) 2px,
-    rgba(0, 0, 0, 0.015) 4px
-  );
-}
-
-/* 特殊效果覆盖 - 移除深色主题的发光效果 */
+/* Remove text glows & heavy shadows in light mode */
 body.light .site-title,
 body.light .host-name,
 body.light .panel-title,
@@ -49,44 +69,204 @@ body.light .chart-current-value {
   text-shadow: none;
 }
 
-/* Modal - 浅色主题使用更淡的遮罩 */
+body.light .status-label.is-online,
+body.light .status-badge.online {
+  background: rgba(36, 138, 61, 0.10);
+  border-color: rgba(36, 138, 61, 0.28);
+  color: var(--moss-ink);
+}
+
+body.light .status-label.is-offline,
+body.light .status-badge.offline {
+  background: rgba(215, 0, 21, 0.08);
+  border-color: rgba(215, 0, 21, 0.28);
+  color: #b42318;
+}
+
+body.light .badge-v4 {
+  background: rgba(200, 107, 70, 0.12);
+  border-color: rgba(200, 107, 70, 0.30);
+  color: #a84f2c;
+}
+
+body.light .badge-v6 {
+  background: rgba(0, 113, 227, 0.10);
+  border-color: rgba(0, 113, 227, 0.28);
+  color: #005bb8;
+}
+
+body.light .badge-v4-v6 {
+  background: rgba(36, 138, 61, 0.10);
+  border-color: rgba(36, 138, 61, 0.28);
+  color: var(--moss-ink);
+}
+
+body.light .badge-tag {
+  color: var(--paper);
+}
+
+body.light .metric-ring-track {
+  border-color: rgba(29, 28, 26, 0.10);
+}
+
+body.light .metric-ring-progress {
+  background: conic-gradient(from -90deg, var(--ring-color) 0 calc(var(--ring-value) * 1%), rgba(29, 28, 26, 0.05) 0 100%);
+}
+
+body.light .metric-ring-swap-track {
+  border-color: rgba(29, 28, 26, 0.08);
+}
+
+body.light .metric-ring-swap-progress {
+  background: conic-gradient(from -90deg, var(--swap-ring-color) 0 calc(var(--swap-ring-value) * 1%), rgba(29, 28, 26, 0.04) 0 100%);
+}
+
+body.light .server-card-ring-divider {
+  border-top-color: var(--hairline);
+}
+
+body.light .server-card-network-panel {
+  background: var(--stone-deep);
+  border-color: rgba(29, 28, 26, 0.08);
+}
+
+body.light .server-card-network-row + .server-card-network-row {
+  border-top-color: rgba(29, 28, 26, 0.08);
+}
+
+body.light .server-card-limit-bar,
+body.light .stat-bar-container {
+  background: rgba(29, 28, 26, 0.10);
+}
+
+body.light .chart-card-header {
+  background: var(--stone-deep);
+}
+
 body.light .modal-overlay {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(29, 28, 26, 0.34);
 }
 
 body.light .modal-dialog {
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 18px 50px rgba(29, 28, 26, 0.16);
 }
 
-/* Card Hover - 浅色主题使用更淡的阴影 */
-body.light .server-card:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-body.light .chart-card:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-}
-
-/* Pulse Dot - 浅色主题的发光效果 */
-body.light .pulse-dot.online {
-  box-shadow: 0 0 6px rgba(26, 127, 90, 0.3);
-}
-
-body.light .pulse-dot.offline {
-  box-shadow: 0 0 6px rgba(220, 38, 38, 0.3);
-}
-
-/* Input Focus - 浅色主题的聚焦效果 */
 body.light .toolbar-input:focus,
 body.light .form-input:focus,
-body.light .form-textarea:focus {
-  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.1);
+body.light .form-textarea:focus,
+body.light .toolbar-select:focus {
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
-/* Highlight Box - 浅色主题的特殊高亮 */
 body.light .highlight-box {
-  background: #fffbeb;
-  border-color: #fde68a !important;
+  background: rgba(201, 122, 0, 0.08);
+  border-color: rgba(201, 122, 0, 0.32) !important;
 }
 
-/* 响应式布局 - 浅色主题继承 main.css 的响应式样式 */
+/* Keep Obsidian iframe embed permanently aligned with Obsidian's Warm Stone Dark canvas */
+body.embed-mode,
+body.light.embed-mode {
+  color-scheme: dark;
+  --stone: #1a1918;
+  --stone-deep: #141312;
+  --stone-raised: #242220;
+  --stone-hover: #2c2926;
+  --ink: #1a1918;
+  --paper: #e8e6e1;
+  --ash: #a09d97;
+  --mist: #85817a;
+  --hairline: rgba(232, 230, 225, 0.10);
+  --hairline-strong: rgba(232, 230, 225, 0.20);
+  --copper: #e8936f;
+  --copper-hover: #f0a382;
+  --copper-press: #d97f59;
+  --accent-soft: rgba(232, 147, 111, 0.16);
+  --moss: #30d158;
+  --moss-ink: #b8f5c7;
+  --clay: #ff9f0a;
+  --rose: #ff453a;
+  --apple-cyan: #5ac8fa;
+  --apple-indigo: #bf5af2;
+  --apple-pink: #ff6482;
+  --bar: rgba(36, 34, 32, 0.82);
+  --sheet: rgba(36, 34, 32, 0.92);
+  --bg-primary: var(--stone-deep);
+  --bg-secondary: var(--stone-raised);
+  --bg-card: var(--stone-raised);
+  --bg-hover: var(--stone-hover);
+  --bg-card-solid: var(--stone-raised);
+  --bg-hover-solid: var(--stone-hover);
+  --border-color: var(--hairline);
+  --border-active: var(--hairline-strong);
+  --text-primary: var(--paper);
+  --text-secondary: var(--ash);
+  --text-muted: var(--mist);
+  --accent-copper: var(--copper);
+  --accent-green: var(--moss);
+  --accent-blue: var(--apple-cyan);
+  --accent-purple: var(--apple-indigo);
+  --accent-pink: var(--apple-pink);
+  --accent-yellow: var(--clay);
+  --accent-red: var(--rose);
+  --accent-cyan: var(--copper);
+  --input-bg: var(--stone-deep);
+  --input-border: var(--hairline-strong);
+  --color-inherit: var(--ink);
+  --color-active: var(--paper);
+  background: var(--stone-deep);
+  color: var(--paper);
+}
+
+body.light.embed-mode .status-label.is-online,
+body.light.embed-mode .status-badge.online {
+  background: rgba(48, 209, 88, 0.12);
+  border-color: rgba(48, 209, 88, 0.34);
+  color: var(--moss-ink);
+}
+
+body.light.embed-mode .status-label.is-offline,
+body.light.embed-mode .status-badge.offline {
+  background: rgba(255, 69, 58, 0.14);
+  border-color: rgba(255, 69, 58, 0.34);
+  color: #ff9c95;
+}
+
+body.light.embed-mode .badge-v4 {
+  background: rgba(232, 147, 111, 0.14);
+  border-color: rgba(232, 147, 111, 0.30);
+  color: var(--copper-hover);
+}
+
+body.light.embed-mode .badge-v6 {
+  background: rgba(90, 200, 250, 0.14);
+  border-color: rgba(90, 200, 250, 0.30);
+  color: var(--apple-cyan);
+}
+
+body.light.embed-mode .badge-v4-v6 {
+  background: rgba(48, 209, 88, 0.14);
+  border-color: rgba(48, 209, 88, 0.30);
+  color: var(--moss-ink);
+}
+
+body.light.embed-mode .metric-ring-track {
+  border-color: rgba(232, 230, 225, 0.10);
+}
+
+body.light.embed-mode .metric-ring-progress {
+  background: conic-gradient(from -90deg, var(--ring-color) 0 calc(var(--ring-value) * 1%), rgba(232, 230, 225, 0.04) 0 100%);
+}
+
+body.light.embed-mode .server-card-network-panel {
+  background: var(--stone-deep);
+  border-color: rgba(232, 230, 225, 0.08);
+}
+
+body.light.embed-mode .server-card-network-row + .server-card-network-row {
+  border-top-color: rgba(232, 230, 225, 0.06);
+}
+
+body.light.embed-mode .server-card-limit-bar,
+body.light.embed-mode .stat-bar-container {
+  background: rgba(232, 230, 225, 0.10);
+}

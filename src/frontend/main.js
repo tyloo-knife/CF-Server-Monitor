@@ -227,8 +227,8 @@ const showTurnstileError = (title, desc) => {
     loading.innerHTML = `
       <div class="loading-content">
         <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
-        <div class="loading-text" style="color: #f85149;">${title}</div>
-        <div style="font-size: 12px; color: #6b7280; margin-top: 12px; max-width: 480px; text-align: center; line-height: 1.6;">${desc}</div>
+        <div class="loading-text" style="color: var(--accent-red, #ff453a);">${title}</div>
+        <div style="font-size: 12px; color: var(--text-secondary, #a09d97); margin-top: 12px; max-width: 480px; text-align: center; line-height: 1.6;">${desc}</div>
       </div>
     `
   }
@@ -263,8 +263,8 @@ const renderStartupTurnstile = async (siteKey, apiIndex) => {
         loading.innerHTML = `
           <div class="loading-content">
             <div style="font-size: 48px; margin-bottom: 16px;">❌</div>
-            <div class="loading-text" style="color: #f85149;">${trans().verificationFailed}</div>
-            <div style="font-size: 12px; color: #6b7280; margin-top: 8px;">${trans().refreshToRetry}</div>
+            <div class="loading-text" style="color: var(--accent-red, #ff453a);">${trans().verificationFailed}</div>
+            <div style="font-size: 12px; color: var(--text-secondary, #a09d97); margin-top: 8px;">${trans().refreshToRetry}</div>
           </div>
         `
       }
@@ -277,8 +277,8 @@ const renderStartupTurnstile = async (siteKey, apiIndex) => {
       loading.innerHTML = `
         <div class="loading-content">
           <div style="font-size: 48px; margin-bottom: 16px;">❌</div>
-          <div class="loading-text" style="color: #f85149;">${trans().verificationError}</div>
-          <div style="font-size: 12px; color: #6b7280; margin-top: 8px;">${trans().refreshToRetry}</div>
+          <div class="loading-text" style="color: var(--accent-red, #ff453a);">${trans().verificationError}</div>
+          <div style="font-size: 12px; color: var(--text-secondary, #a09d97); margin-top: 8px;">${trans().refreshToRetry}</div>
         </div>
       `
     }
@@ -286,7 +286,28 @@ const renderStartupTurnstile = async (siteKey, apiIndex) => {
   }
 }
 
+const EMBED_STORAGE_KEY = 'cfsm_embed_mode'
+
+const applyEmbedMode = () => {
+  if (typeof window === 'undefined' || typeof document === 'undefined' || !document.body) return
+  try {
+    const params = new URLSearchParams(window.location.search)
+    const embedParam = params.get('embed')
+    if (embedParam === '1') {
+      sessionStorage.setItem(EMBED_STORAGE_KEY, '1')
+    } else if (embedParam === '0') {
+      sessionStorage.removeItem(EMBED_STORAGE_KEY)
+    }
+    const isFramed = window.self !== window.top
+    const isEmbed = embedParam === '1' || (isFramed && sessionStorage.getItem(EMBED_STORAGE_KEY) === '1')
+    document.body.classList.toggle('embed-mode', isEmbed)
+  } catch {
+    // Ignore restricted sessionStorage/frame access
+  }
+}
+
 async function initApp() {
+  applyEmbedMode()
   // 后台入口 URL 的归一化在 router 模块内、createWebHashHistory() 之前完成，
   // 这里只读取归一化后的 URL 做分支判断，不能再改写地址栏。
 
